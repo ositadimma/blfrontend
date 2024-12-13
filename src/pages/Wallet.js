@@ -32,6 +32,12 @@ const navigate = useNavigate();
           console.error('Error fetching balance:', err);
         }
       };
+	const sendCryp=() ={
+const fromAddress= '' 
+		const toAddress= '' 
+		const privateKey='' 
+		
+	} 
 
       const sendEther = async (fromAddress, toAddress, privateKey, amount) => {
         try {
