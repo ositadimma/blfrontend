@@ -47,9 +47,22 @@ nav > a > div{
 main{
   /* max-width: 1200px;
   margin: 40px auto; */
-  background-color: rgb(252, 252, 245);;
+  background-color: hsl(60, 54%, 97%);;
   width: 100%;
   padding: 60px 30px 30px 30px;
+}
+.modal-body{
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  background-color: black;
+  opacity: 0.3;
+  padding: 200px;
+}
+.modal-card{
+  background-color: #ffffff;
+  width: 80%;
+  height: 80%;
 }
 .root-layout{
   display: flex;

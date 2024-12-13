@@ -1,4 +1,6 @@
 import { Web3 } from 'web3';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+
 
 // private RPC endpoint
 const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
@@ -9,12 +11,62 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
 web3.eth.getBlockNumber().then(console.log);
 
 export default function Wallet() {
+const navigate = useNavigate();
+    const showCreateAccount= ()=>{
+
+    }
+
+    const showAddAccount= ()=>{
+        const redirectTo= '/dashboard/wallet/addaccount'
+        navigate(redirectTo);
+    }
+    const getBalance = async (address) => {
+        try {
+          const balance = await web3.eth.getBalance(address);
+          console.log(`Balance of ${address}:`, web3.utils.fromWei(balance, 'ether'), 'ETH');
+        } catch (err) {
+          console.error('Error fetching balance:', err);
+        }
+      };
+
+      const sendEther = async (fromAddress, toAddress, privateKey, amount) => {
+        try {
+          const transaction = {
+            from: fromAddress,
+            to: toAddress,
+            value: web3.utils.toWei(amount.toString(), 'ether'),
+            gas: 21000, // Standard gas limit for ETH transfer
+          };
+      
+          // Sign the transaction
+          const signedTransaction = await web3.eth.accounts.signTransaction(transaction, privateKey);
+      
+          // Send the signed transaction
+          const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+          console.log('Transaction successful:', receipt.transactionHash);
+        } catch (err) {
+          console.error('Error sending Ether:', err);
+        }
+      };
+      
+      // Example usage
+    //   const fromAddress = '0xYourSenderAddress';
+    //   const toAddress = '0xRecipientAddress';
+    //   const privateKey = '0xYourPrivateKey'; // Keep this secure!
+    //   const amount = 0.01; // Amount in Ether
+      
+    //   sendEther(fromAddress, toAddress, privateKey, amount);
+      
+      
+      // Example usage
+    //   getBalance('0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'); // Replace with an Ethereum address
+        
     return(
         <div className="wallet">
             <div>
                 <div className="wallet-container">
-                <button>create new account</button>
-                <button>add account</button>
+                <button onClick={showCreateAccount}>create new account</button>
+                <button onClick={showAddAccount}>add account</button>
                     {/* <div>
                     <label>Balance</label>
                         <select style={{float: "right"}}>
