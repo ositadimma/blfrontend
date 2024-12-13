@@ -12,6 +12,9 @@ web3.eth.getBlockNumber().then(console.log);
 
 export default function Wallet() {
 Comst [accounts, setAccounts] = useState([]) 
+useEffect(() =>{
+	getAccounts() 
+	}, [] ) 
 const navigate = useNavigate();
     const showCreateAccount= ()=>{
 
