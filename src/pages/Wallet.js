@@ -1,6 +1,6 @@
 import { Web3 } from 'web3';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-
+import React, { useState, useEffect } from "react"
 
 // private RPC endpoint
 const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
@@ -11,6 +11,7 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
 web3.eth.getBlockNumber().then(console.log);
 
 export default function Wallet() {
+Comst [accounts, setAccounts] = useState([]) 
 const navigate = useNavigate();
     const showCreateAccount= ()=>{
 
@@ -48,11 +49,24 @@ const navigate = useNavigate();
           console.error('Error sending Ether:', err);
         }
       };
-    const getAccounts= () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/add_account', formData
+    const getAccounts= async () =>{
+      const response = await axios.post('http://localhost:10000/v1/main/api/get_accounts' 
     );
-    console.log(response.data);
-      console.log("successful", );
+        Var objArr= [] 
+        For(var i=1;i<response.data.length){
+        Var balance= await getBalance(response.data.accId);
+            
+            Var obj= {
+                id: response.data.accId,
+                balance: balance
+            } 
+            objArr.push(obj)
+            
+            
+        } 
+        SetAccounts(objArr)
+        console.log(response.data);
+      console.log("successful" );
     } 
       
       // Example usage
@@ -87,7 +101,11 @@ const navigate = useNavigate();
                     your accounts
                 </div>
                 <div>
-
+				For(var i=1;i<accounts.length;i++){
+                    <div>account id: {accounts[i].id}</div>
+                    <div>account id: {accounts[i].id}</div>
+                    <div></div>
+                }
                 </div>
             </div>
             <div>
