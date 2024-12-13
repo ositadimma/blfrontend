@@ -48,6 +48,12 @@ const navigate = useNavigate();
           console.error('Error sending Ether:', err);
         }
       };
+    const getAccounts= () =>{
+      const response = await axios.post('http://localhost:10000/v1/main/api/add_account', formData
+    );
+    console.log(response.data);
+      console.log("successful", );
+    } 
       
       // Example usage
     //   const fromAddress = '0xYourSenderAddress';
