@@ -53,28 +53,18 @@ const SignIn = () => {
       console.log(response)
       let expires = new Date();
       expires.setTime(expires.getTime() + 86400 * 1000);
-      setCookie("bl_auth_token", response.data.idToken, { path: "/", expires,secure: false });
-      // User creation succeeded
-      // setAlertMessage('logged in');
-      // setAlertType('success');
-      // setClassData(responseData.data);
-      // let expires = new Date();
-      // expires.setTime(expires.getTime() + 86400 * 1000);
-      // setCookie("sds_auth_token", responseData.data.idToken, { path: "/", expires,secure: false });
-      // setIsLoading(false);
-      // setAlertDisplay(true);
-      // setAlertDisplay(true);
-      // navigation("/profile");
+      setCookie("bl_auth_token", response.data.data.idToken, { path: "/", expires,secure: false });
+      console.log("Login Successful", response);
+      alert("Login Successful!");
+      navigate(redirectTo);
+      // setNav(nav+1);
     } else {
       // setAlertMessage('username or password invalid');
       // setAlertType('error');
       // setIsLoading(false);
       // setAlertDisplay(true);
     }
-      console.log("Login Successful", response);
-      alert("Login Successful!");
-      navigate(redirectTo);
-      // setNav(nav+1);
+     
     } else {
       setErrors(validationErrors);
     }

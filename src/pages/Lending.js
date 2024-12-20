@@ -2,6 +2,7 @@ import { Web3 } from 'web3';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
+import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
 const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
@@ -11,27 +12,30 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
 
 web3.eth.getBlockNumber().then(console.log);
 
-export default function Wallet() {
+export default function Lending() {
+    const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [accounts, setAccounts] = useState([])
 const [accountsLength, setAccountsLength] = useState([])  
-const [displayedAccounts, setDisplayedAccounts] = useState([]) 
-const displayedAccountsTemp= []
-const displayAccounts=(userAccounts)=>{
-  for(var i=1;i<userAccounts.length; i++){
-    displayedAccountsTemp.push(
+const [displayedUserLendings, setDisplayedUserLendings] = useState([]) 
+const [displayedUserLendRequests, setDisplayedUserLendRequests] = useState([]) 
+
+const displayedUserLendingRequestsTemp= []
+const displayLendingOffers=(userRequests)=>{
+  for(var i=1;i<userRequests.length; i++){
+    displayedUserLendingRequestsTemp.push(
       <div>
-              <div>account id: {userAccounts[i].id}</div>
-              <div>account id: {userAccounts[i].id}</div>
+              <div>account address: {userRequests[i].id}</div>
+              <div>account id: {userRequests[i].id}</div>
               <div></div>
       </div>
     )
  }
- setDisplayedAccounts(displayedAccountsTemp)
+ setDisplayedUserLendRequests(displayedUserLendingRequestsTemp)
 }
 
 useEffect(() =>{
-	getAccounts() 
+	displayLendingOffers() 
 	}, [] ) 
 
     const showCreateAccount= ()=>{
@@ -97,40 +101,29 @@ const fromAddress= ''
         console.log(response.data);
       console.log("successful" );
     } 
-      
-      // Example usage
-    //   const fromAddress = '0xYourSenderAddress';
-    //   const toAddress = '0xRecipientAddress';
-    //   const privateKey = '0xYourPrivateKey'; // Keep this secure!
-    //   const amount = 0.01; // Amount in Ether
-      
-    //   sendEther(fromAddress, toAddress, privateKey, amount);
-      
-      
-      // Example usage
-    //   getBalance('0xde0B295669a9FD93d5F28D9Ec85E40f4cb697BAe'); // Replace with an Ethereum address
-        
+    
     return(
         <div className="wallet">
             <div>
                 <div className="wallet-container">
-                <button onClick={showCreateAccount}>create new account</button>
-                <button onClick={showAddAccount}>add account</button>
-                    {/* <div>
-                    <label>Balance</label>
-                        <select style={{float: "right"}}>
-                            <option>BTC</option>
-                        </select>
-                    </div>
-                    <div className="balance">
-                        2000.00
-                    </div> */}
+                <button onClick={showCreateAccount}>Browse Loan Requests</button>
+                <button onClick={showAddAccount}>offer lending</button>
                 </div>
                 <div>
-                    your accounts
+                    Your Lendings
                 </div>
-                <div>{displayedAccounts}
+                <div>
+                    Active Lendings
                 </div>
+                <div>{displayedUserLendings}</div>
+                <div>
+                    Active Lending offers
+                </div>
+                <div>{displayedUserLendRequests}</div>
+                <div>
+                    Lending History
+                </div>
+                {/* <div>{displayedAccounts}</div> */}
             </div>
             <div>
                 

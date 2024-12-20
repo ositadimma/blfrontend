@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import '../styles/authStyle.css'
 import axios from 'axios';
-// import {useHistory} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstname: "",
     middlename: "",
@@ -51,15 +52,13 @@ const Register = () => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
-      const response = await axios.post('http://localhost:10000/v1/auth/api/register', formData
-    );
-    console.log(response.data);
-    // let history= useHistory()
+      const response = await axios.post('http://localhost:10000/v1/auth/api/register', formData);
+     if(response.data){
+      console.log(response.data);
       console.log("Form submitted successfully", );
       alert("Registration Successful!");
-      // setTimeOut(()=>{
-      //   history.push('/sign_in')
-      // }, 2000)
+      navigate("/login");
+     }
     } else {
       setErrors(validationErrors);
     }

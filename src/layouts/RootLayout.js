@@ -18,15 +18,11 @@ export default function RootLayout() {
                     </NavLink>
                     <NavLink className={'navl'} to={'/dashboard/profile'}><div >Profile</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/wallet'}><div>Wallet</div></NavLink>
-                    <NavLink className={'navl'} to={'/dashboard/testwallet'}><div>Test Wallet</div></NavLink>
-                    <NavLink className={'navl'} to={'/dashboard/loans'}><div>Loan</div></NavLink>
+                    <NavLink className={'navl'} to={'/dashboard/loans'}><div>Loans</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/activity'}><div>Activity</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/settings'}><div>Settings</div></NavLink>
-                    <NavLink className={'navl'} to={'/register'}><div>Register</div></NavLink>
-                    <NavLink className={'navl'} to={'/login'}><div>Login</div></NavLink>
-                    <NavLink className={'navl'} to={'/logout'}><div>Logout</div></NavLink>
-                    <NavLink className={'navl'} to={'/about'}><div>about</div></NavLink>
-                    <NavLink className={'navl'} to={'/support'}><div>Support</div></NavLink>   
+                    {/* <NavLink className={'navl'} to={'/about'}><div>about</div></NavLink>
+                    <NavLink className={'navl'} to={'/support'}><div>Support</div></NavLink>    */}
                 </nav>
             </header>
 <main>

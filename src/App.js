@@ -14,6 +14,8 @@ import Register from './pages/register';
 import SignIn from './pages/signin';
 import LandingPage from './pages/landingPage';
 import AddAccount from './pages/walletPages/addAccount';
+import Loans from './pages/Loans';
+import RequestLoan from './pages/loanpages/requestLoan';
 
 const router= createBrowserRouter(
   createRoutesFromElements(
@@ -31,7 +33,8 @@ const router= createBrowserRouter(
         <Route path='/dashboard/wallet' element={<Wallet/>}/>
         <Route path='/dashboard/wallet/addaccount' element={<AddAccount/>}/>
         <Route path='/dashboard/testwallet' element={<TestWallet/>}/>
-        <Route path='/dashboard/loans' element={<></>}/>
+        <Route path='/dashboard/loans' element={<Loans/>}/>
+        <Route path='/dashboard/loans/requestloans' element={<RequestLoan/>}/>
         <Route path='/dashboard/' element={<></>}/>
         <Route path='/dashboard/' element={<></>}/>
       </Route>
