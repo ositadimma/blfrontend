@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react"
 import axios from 'axios';
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac17e37');
 
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');

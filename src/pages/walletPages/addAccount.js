@@ -3,7 +3,8 @@ import { Web3 } from 'web3';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { Cookies, useCookies } from "react-cookie";
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+// const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac17e37');
+const web3 = new Web3('http://127.0.0.1:7545');
 const AddAccount = () => {
   const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   

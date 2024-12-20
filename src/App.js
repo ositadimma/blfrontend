@@ -16,6 +16,10 @@ import LandingPage from './pages/landingPage';
 import AddAccount from './pages/walletPages/addAccount';
 import Loans from './pages/Loans';
 import RequestLoan from './pages/loanpages/requestLoan';
+import Lending from './pages/Lending';
+import LoanRequests from './pages/loanpages/loanRequests';
+import LoanDetails from './pages/loanpages/loanDetails';
+import OfferRequest from './pages/loanpages/offerRequest';
 
 const router= createBrowserRouter(
   createRoutesFromElements(
@@ -34,7 +38,11 @@ const router= createBrowserRouter(
         <Route path='/dashboard/wallet/addaccount' element={<AddAccount/>}/>
         <Route path='/dashboard/testwallet' element={<TestWallet/>}/>
         <Route path='/dashboard/loans' element={<Loans/>}/>
-        <Route path='/dashboard/loans/requestloans' element={<RequestLoan/>}/>
+        <Route path='/dashboard/lending' element={<Lending/>}/>
+        <Route path='/dashboard/loans/loanrequests' element={<LoanRequests/>}/>
+        <Route path='/dashboard/loans/requestloan' element={<RequestLoan/>}/>
+        <Route path='/dashboard/loans/loandetails/:loanid' element={<LoanDetails/>}/>
+        <Route path='/dashboard/lendings/offerrequest/:loanid' element={<OfferRequest/>}/> 
         <Route path='/dashboard/' element={<></>}/>
         <Route path='/dashboard/' element={<></>}/>
       </Route>

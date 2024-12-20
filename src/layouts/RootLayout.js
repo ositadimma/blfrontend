@@ -9,7 +9,7 @@ export default function RootLayout() {
                     <h1 style={{marginLeft: 10}}>BlockLend</h1>
                     <NavLink 
                     className={'navl'} 
-                    to={'/home'}
+                    to={'/dashboard'}
                     style={({isActive})=>{
                         return isActive? {backgroundColor: '#2a2a52'}:{}
                     }}
@@ -19,6 +19,7 @@ export default function RootLayout() {
                     <NavLink className={'navl'} to={'/dashboard/profile'}><div >Profile</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/wallet'}><div>Wallet</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/loans'}><div>Loans</div></NavLink>
+                    <NavLink className={'navl'} to={'/dashboard/lending'}><div>Lending</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/activity'}><div>Activity</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/settings'}><div>Settings</div></NavLink>
                     {/* <NavLink className={'navl'} to={'/about'}><div>about</div></NavLink>

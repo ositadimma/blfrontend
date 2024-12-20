@@ -6,7 +6,7 @@ import { Cookies, useCookies } from "react-cookie";
 import LoanOptions from "./loanOptions";
 // const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac17e37');
 const web3 = new Web3('http://127.0.0.1:7545');
-const RequestLoan = () => {
+const OfferRequest = () => {
   const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const [accounts, setAccounts] = useState([]);
   const [displayedAccounts, setDisplayedAccounts] = useState([]);
@@ -127,40 +127,23 @@ function isValidPrivateKey(privateKey, expectedAddress) {
     <div className="registration-form">
     <h2>Application Form</h2>
     <form onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label>Amount *</label>
-        <input
-          type="text"
-          id="amount"
-          name="amount"
-          value={formData.amount}
-          onChange={(e) =>{ handleChange('amount', e.target.value)}}
-        />
-        {/* {errors.accId && <p className="error-text">{errors.amount}</p>} */}
-      </div>
-
-      <div className="form-group">
-      <label >Choose an account *:</label>
-      <div>
-        {<LoanOptions accounts={accounts} value={formData.account} onChange={handleChange} field='account'/>}
-      </div>
-        </div>
     <div className="form-group">
-      <label >Choose an installment plan *:</label>
+      <label >Propose Interest *:</label>
         <select
-            id="installments"
-            name="installments"
-            value={formData.installments}
-            onChange={(e) =>{ handleChange('installments', e.target.value)}}
+            id="interest"
+            name="interest"
+            value={formData.interest}
+            onChange={(e) =>{ handleChange('interest', e.target.value)}}
             style={{ margin: '10px', padding: '5px' }}
         >
             <option value="" disabled>
             -- Select an Option --
             </option>
-            <option value={1}>1 installment</option>
-            <option value={3}>3 installments</option>
-            <option value={6}>6 installments</option>
-            <option value={12}>12 installments</option>
+            <option value={10}>10%</option>
+            <option value={20}>20%</option>
+            <option value={30}>30%</option>
+            <option value={40}>40%</option>
+            <option value={50}>50%</option>
         </select>
         </div>
         <div className="form-group">
@@ -181,11 +164,11 @@ function isValidPrivateKey(privateKey, expectedAddress) {
             <option value={12}>1 year</option>
         </select>
         </div>
-      <button type="submit" className="submit-button">Apply for Loan</button>
+      <button type="submit" className="submit-button">Offer Loan</button>
     </form>
   </div>
   
   );
 };
 
-export default RequestLoan;
+export default OfferRequest;

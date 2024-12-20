@@ -12,20 +12,60 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
 
 web3.eth.getBlockNumber().then(console.log);
 
-export default function Lending() {
+export default function LoanRequests() {
     const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [loans, setLoans] = useState([])
-const [lendings, setLendings] = useState([])
+const [formData, setFormData] = useState({})
+const [loanRequests, setLoanRequests] = useState([])
+const [loan, setLoan] = useState([])
 const [accountsLength, setAccountsLength] = useState([])  
-const [displayedUserLendings, setDisplayedUserLendings] = useState([]) 
-const [displayedAllLendings, setDisplayedAllLendings] = useState([]) 
-const [displayedUserLendRequests, setDisplayedUserLendRequests] = useState([]) 
+const [displayedUserLoans, setDisplayedUserLoans] = useState([]) 
+const [displayedAllLoans, setDisplayedAllLoans] = useState([]) 
+const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([]) 
 
-const displayedUserLendRequestsTemp= []
+const displayedUserLoanRequestsTemp= []
+const showDetails= (id)=>{
+    const redirectTo= `/dashboard/loans/loandetails/${id}`
+navigate(redirectTo)
+}
+const displayLoanRequests=(userRequests)=>{
+  for(var i=1;i<userRequests.length; i++){
+    displayedUserLoanRequestsTemp.push(
+        <tr key={userRequests.id}>
+            <td>{userRequests.id}</td>
+            <td>${userRequests.amount}</td>
+            <td>{userRequests.address}</td>
+        </tr>
+    )
+ }
+ setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
+}
+const displayLoans=(userLoans)=>{
+    for(var i=1;i<userLoans.length; i++){
+      displayedUserLoanRequestsTemp.push(
+          <tr key={userLoans.id}>
+              <td>{userLoans.id}</td>
+              <td>${userLoans.amount}</td>
+              <td>{userLoans.address}</td>
+          </tr>
+      )
+   }
+   setDisplayedUserLoans(displayedUserLoanRequestsTemp)
+  }
 
-const displayedUserLendingsTemp= []
-
+const displayAllLoans=(userLoans)=>{
+    for(var i=1;i<userLoans.length; i++){
+      displayedUserLoanRequestsTemp.push(
+          <tr key={userLoans.id}>
+              <td>{userLoans.id}</td>
+              <td>${userLoans.amount}</td>
+              <td>{userLoans.address}</td>
+          </tr>
+      )
+   }
+   setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
+  }
 useEffect(() =>{
 	getLoans()
     getLoanRequests()
@@ -70,7 +110,9 @@ const fromAddress= ''
         const response = await axios.post('http://localhost:10000/v1/main/api/get_loan');
           var objArr= [] 
           
-          setLendings(response.data.data)
+          setLoan(response.data.data)
+          setAccountsLength(objArr.length)
+          displayLoans(objArr)
           console.log(response.data);
         console.log("successful" );
       } 
@@ -79,60 +121,62 @@ const fromAddress= ''
         var objArr= [] 
         
         setLoans(response.data.data)
+        displayLoans(objArr)
         console.log(response.data);
       console.log("successful" );
     } 
 
     const getLoanRequests= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests');
-         setLendings(response.data.data)
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_all_loan_requests',
+            formData,
+            {
+                headers: {
+                  'bl_auth_token': cookie.bl_auth_token, 
+                  'Content-Type': 'application/json',    
+                },
+                }
+        );
+         setLoanRequests(response.data.data)
           console.log(response.data);
         console.log("successful" );
+        
       } 
 
       
-    const showLoanRequest= async () =>{
-        const redirectTo= '/dashboard/loans/loanrequests'
+    const showRequestLoan= async () =>{
+        const redirectTo= '/dashboard/loans/requestloan'
         navigate(redirectTo);
       } 
             
     const showOfferLoan= async () =>{
-        const redirectTo= '/dashboard/lendings/offerloan'
+        const redirectTo= '/dashboard/wallet/addaccount'
         navigate(redirectTo);
     } 
     
     return(
         <div className="wallet">
             <div>
-                <div className="wallet-container">
-                <button onClick={showOfferLoan}>offer loan</button>
-                <button onClick={showLoanRequest}>view loan requests</button> 
-                </div>
                 <div>
-                    Your lendings
-                </div>
                 <div>
-                    Active loan offers
-                </div>
-                <div>
+                <h2>Active Loan Requests</h2>
                 <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
-                      <th>Loan ID</th>
-                      <th>Loaner Adress</th>
-                      <th>Amount</th>
                       <th>Loanee Address</th>
-                      <th>Action</th>
+                      <th>Amount</th>
+                      <th>installment </th>
+                      <th>start time</th>
+                      <th>action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {displayedUserLendRequests.map((request)=>(
+                    {loanRequests.map((request)=>(
                       <tr>
-                      <td>{request.id}</td>
-                      <td>{request.accId}</td>
+                      <td>{request.loaneeAccId}</td>
                       <td>{request.amount}</td>
-                      <td>{request.loaneeId}</td>
-                      <td><button>view details</button></td>
+                      <td>{request.installments}</td>
+                      <td>{request.start} month(s)</td>
+                      <td><button onClick={()=>{showDetails(request._id)}}>view details</button></td>
                       </tr>
                     )
 
@@ -140,28 +184,6 @@ const fromAddress= ''
                   </tbody>
                 </table>
                 </div>
-                <div>
-                <div>
-      <h2>Loan Details</h2>
-      <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th>Loan ID</th>
-            <th>Loaner Adress</th>
-            <th>Amount</th>
-            <th>Loanee Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedUserLendings}
-        </tbody>
-      </table>
-    </div>
-                    Active loan requests
-                </div>
-                {/* <div>{displayedUserLoanRequests}</div> */}
-                <div>
-                    loan History
                 </div>
                 <div></div>
             </div>

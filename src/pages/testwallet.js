@@ -1,7 +1,8 @@
 import { Web3 } from 'web3';
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+// const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('http://127.0.0.1:7545');
 
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');

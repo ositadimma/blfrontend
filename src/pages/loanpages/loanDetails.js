@@ -1,5 +1,5 @@
 import { Web3 } from 'web3';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
@@ -12,15 +12,18 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
 
 web3.eth.getBlockNumber().then(console.log);
 
-export default function Lending() {
+export default function LoanDetails() {
     const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [loans, setLoans] = useState([])
 const [lendings, setLendings] = useState([])
+const [loanRequests, setLoanRequests] = useState([])
+const [loanRequest, setLoanRequest] = useState({})
 const [accountsLength, setAccountsLength] = useState([])  
 const [displayedUserLendings, setDisplayedUserLendings] = useState([]) 
 const [displayedAllLendings, setDisplayedAllLendings] = useState([]) 
 const [displayedUserLendRequests, setDisplayedUserLendRequests] = useState([]) 
+const {id}= useParams();
 
 const displayedUserLendRequestsTemp= []
 
@@ -28,8 +31,8 @@ const displayedUserLendingsTemp= []
 
 useEffect(() =>{
 	getLoans()
-    getLoanRequests()
-    getCurrentLoan() 
+    getLoanRequest()
+  
 	}, [] ) 
 
     const getBalance = async (address) => {
@@ -66,7 +69,24 @@ const fromAddress= ''
           console.error('Error sending Ether:', err);
         }
       };
-      const getCurrentLoan= async () =>{
+      
+      const getLoanRequest= async () =>{
+        const formData= {id: id};
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_request',
+            formData,
+            {
+                headers: {
+                  'bl_auth_token': cookie.bl_auth_token, 
+                  'Content-Type': 'application/json',    
+                },
+                }
+        );
+         setLoanRequest(response.data.data[0])
+          console.log(response.data);
+        console.log("successful" );
+        
+      } 
+      const getDetails= async () =>{
         const response = await axios.post('http://localhost:10000/v1/main/api/get_loan');
           var objArr= [] 
           
@@ -96,81 +116,25 @@ const fromAddress= ''
         navigate(redirectTo);
       } 
             
-    const showOfferLoan= async () =>{
-        const redirectTo= '/dashboard/lendings/offerloan'
+    const requestOffer= async () =>{
+        const redirectTo= '/dashboard/lendings/offerrequest/'
         navigate(redirectTo);
     } 
     
     return(
         <div className="wallet">
             <div>
-                <div className="wallet-container">
-                <button onClick={showOfferLoan}>offer loan</button>
-                <button onClick={showLoanRequest}>view loan requests</button> 
-                </div>
                 <div>
-                    Your lendings
+                    Loan Details
                 </div>
-                <div>
-                    Active loan offers
-                </div>
-                <div>
-                <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr>
-                      <th>Loan ID</th>
-                      <th>Loaner Adress</th>
-                      <th>Amount</th>
-                      <th>Loanee Address</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayedUserLendRequests.map((request)=>(
-                      <tr>
-                      <td>{request.id}</td>
-                      <td>{request.accId}</td>
-                      <td>{request.amount}</td>
-                      <td>{request.loaneeId}</td>
-                      <td><button>view details</button></td>
-                      </tr>
-                    )
-
-                    )}
-                  </tbody>
-                </table>
-                </div>
-                <div>
-                <div>
-      <h2>Loan Details</h2>
-      <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th>Loan ID</th>
-            <th>Loaner Adress</th>
-            <th>Amount</th>
-            <th>Loanee Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedUserLendings}
-        </tbody>
-      </table>
-    </div>
-                    Active loan requests
-                </div>
-                {/* <div>{displayedUserLoanRequests}</div> */}
-                <div>
-                    loan History
-                </div>
-                <div></div>
+                <div>Loanee Crypto Address: {`${loanRequest.loaneeAccId}`}</div>
+                <div>amount: {`${loanRequest.installments}`}</div>
+                <div>installments: {`${loanRequest.installments}`}</div>
+                <div>start date: {`${loanRequest.start}`}</div>
+                <div><button onClick={requestOffer}>offer loan</button></div>
+                   
             </div>
-            <div>
-                
-            </div>
-            <div>
-                
-            </div>
+            
         </div>
     )
 } 
