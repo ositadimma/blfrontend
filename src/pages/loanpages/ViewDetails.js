@@ -16,7 +16,8 @@ export default function LoanDetails() {
     const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [loans, setLoans] = useState([])
-const [lendings, setLendings] = useState([])
+const [lendings, setLendings] = useState([]) 
+const [paymentDates, setPaymentDates] = useState([])
 const [loanRequests, setLoanRequests] = useState([])
 const [loanRequest, setLoanRequest] = useState({})
 const [accountsLength, setAccountsLength] = useState([])  
@@ -32,6 +33,11 @@ const displayedUserLendingsTemp= []
 const location = useLocation();
 const data = location.state;
 
+Var installments=[] 
+For(i=0; i<data.installments; i++) {
+	installments =[...installments, index +1]
+} 
+setPaymentDates(installments) 
 useEffect(() =>{
 	getLoans()
     getLoanRequest()
@@ -137,6 +143,7 @@ const fromAddress= ''
                 <div>installments: {`${data.installments}`}</div>
                 <div>total payment : {`${(data.interest*data.amount/100)+amount}`}</div>       
 	        <div>payment dates: {`${data.start}`}</div>
+	    
 <div><button onClick={requestOffer}>Propose loan</button></div>
                    
             </div>
