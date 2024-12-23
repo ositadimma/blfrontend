@@ -16,50 +16,15 @@ export default function Loans() {
     const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [loans, setLoans] = useState([])
+const [loanRequests, setLoanRequests] = useState([])
 const [loan, setLoan] = useState([])
 const [accountsLength, setAccountsLength] = useState([])  
 const [displayedUserLoans, setDisplayedUserLoans] = useState([]) 
 const [displayedAllLoans, setDisplayedAllLoans] = useState([]) 
 const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([]) 
 
-const displayedUserLoanRequestsTemp= []
-const displayLoanRequests=(userRequests)=>{
-  for(var i=1;i<userRequests.length; i++){
-    displayedUserLoanRequestsTemp.push(
-        <tr key={userRequests.id}>
-            <td>{userRequests.id}</td>
-            <td>${userRequests.amount}</td>
-            <td>{userRequests.address}</td>
-        </tr>
-    )
- }
- setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
-}
-const displayLoans=(userLoans)=>{
-    for(var i=1;i<userLoans.length; i++){
-      displayedUserLoanRequestsTemp.push(
-          <tr key={userLoans.id}>
-              <td>{userLoans.id}</td>
-              <td>${userLoans.amount}</td>
-              <td>{userLoans.address}</td>
-          </tr>
-      )
-   }
-   setDisplayedUserLoans(displayedUserLoanRequestsTemp)
-  }
 
-const displayAllLoans=(userLoans)=>{
-    for(var i=1;i<userLoans.length; i++){
-      displayedUserLoanRequestsTemp.push(
-          <tr key={userLoans.id}>
-              <td>{userLoans.id}</td>
-              <td>${userLoans.amount}</td>
-              <td>{userLoans.address}</td>
-          </tr>
-      )
-   }
-   setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
-  }
+
 useEffect(() =>{
 	getLoans()
     getLoanRequests()
@@ -106,7 +71,6 @@ const fromAddress= ''
           
           setLoan(response.data.data)
           setAccountsLength(objArr.length)
-          displayLoans(objArr)
           console.log(response.data);
         console.log("successful" );
       } 
@@ -115,15 +79,39 @@ const fromAddress= ''
         var objArr= [] 
         
         setLoans(response.data.data)
-        displayLoans(objArr)
         console.log(response.data);
       console.log("successful" );
     } 
+    const viewOffers= async (request) =>{
+      navigate('/dashboard/loans/viewoffers', {state: request})
+      // const response = await axios.post('http://localhost:10000/v1/main/api/get_loans',
+      //   {},
+      //   {
+      //       headers: {
+      //         'bl_auth_token': cookie.bl_auth_token, 
+      //         'Content-Type': 'application/json',    
+      //       },
+      //       }
+      // );
+      //   var objArr= [] 
+        
+      //   setLoans(response.data.data)
+      //   console.log(response
+      //     .data);
+      // console.log("successful" );
+    } 
+    
 
     const getLoanRequests= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests');
-         setLoans(response.data.data)
-          displayLoans(loans)
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests',
+          {},
+            {
+                headers: {
+                  'bl_auth_token': cookie.bl_auth_token, 
+                  'Content-Type': 'application/json',    
+                },
+                });
+         setLoanRequests(response.data.data)
           console.log(response.data);
         console.log("successful" );
       } 
@@ -150,27 +138,33 @@ const fromAddress= ''
                     Your loans
                 </div>
                 <div>
-                    Active loan offers
+                <div>
+                  <h2>Loan Details</h2>
+                  <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th>Loanee Address</th>
+                        <th>Amount</th>
+                        <th>number of installments</th>
+                        <th>repayment start time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {loanRequests.map((request)=>(
+                        <tr>
+                          <td>{request.loaneeAccId}</td>
+                          <td>{request.amount}</td>
+                          <td>{request.installments}</td>
+                          <td>{request.start} months</td>
+                          <td><button onClick={()=>viewOffers(request)}>view offers</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div>
-                <div>
-      <h2>Loan Details</h2>
-      <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th>Loan ID</th>
-            <th>Amount</th>
-            <th>Loanee Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          {displayedUserLoans}
-        </tbody>
-      </table>
-    </div>
                     Active loan requests
                 </div>
-                <div>{displayedUserLoanRequests}</div>
+                <div></div>
                 <div>
                     loan History
                 </div>

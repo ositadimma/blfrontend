@@ -26,8 +26,9 @@ const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([])
 
 const displayedUserLoanRequestsTemp= []
 const showDetails= (id)=>{
-    const redirectTo= `/dashboard/loans/loandetails/${id}`
-navigate(redirectTo)
+    const redirectTo= `/dashboard/loans/loandetails`
+    const data= {id: id}
+    navigate(redirectTo, {state: data})
 }
 const displayLoanRequests=(userRequests)=>{
   for(var i=1;i<userRequests.length; i++){

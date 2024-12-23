@@ -20,7 +20,7 @@ console.log(accounts)
         -- Select an Option --
         </option>
         {accounts.map((account)=>(
-            <option value={account._id}>{account.accountId}</option>
+            <option value={account.accountId}>{account.accountId}</option>
         ))}
         </select> 
     </div>
