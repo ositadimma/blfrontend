@@ -144,7 +144,7 @@ const fromAddress= ''
                 <div>total payment : {`${(data.interest*data.amount/100)+amount}`}</div>       
 	        <div>payment dates: {`${data.start}`}</div>
 	    <div>
-                    {payments?.map((payment, index)=>(
+                    {paymentDates?.map((payment, index)=>(
                         
                         <div>{`${payment}: `}{`${day}/${(parseInt(month)+parseInt(data?.start)+index)<=12?(parseInt(month)+parseInt(data?.start)+index)+`/${parseInt(year)+1}`:(parseInt(month)+parseInt(data?.start)+index)-12}/${year}`}</div>
                         
