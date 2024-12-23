@@ -133,9 +133,12 @@ const fromAddress= ''
     const acceptOffer async () =>{
 	      const response = await axios.post('http://localhost:10000/v1/main/api/loans/accept_offer', 
 						{id: data?._id},
-						
-					       );
-         setLendings(response.data.data)
+						headers: {
+                  'bl_auth_token': cookie.bl_auth_token, 
+                  'Content-Type': 'application/json',    
+                })
+                
+        );
           console.log(response.data);
         Alert("offer accepted" );
         const redirectTo= '/dashboard/loans'
