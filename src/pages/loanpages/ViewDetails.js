@@ -131,8 +131,15 @@ const fromAddress= ''
       } 
             
     const acceptOffer async () =>{
-        const redirectTo= '/dashboard/lendings/acceptoffer/'
-        navigate(redirectTo, {state: {id: data.id} });
+	      const response = await axios.post('http://localhost:10000/v1/main/api/loans/accept_offer', 
+						{id: data?._id},
+						
+					       );
+         setLendings(response.data.data)
+          console.log(response.data);
+        Alert("offer accepted" );
+        const redirectTo= '/dashboard/loans'
+        navigate(redirectTo);
     } 
     
     return(
