@@ -74,9 +74,9 @@ const fromAddress= ''
       };
       
       const getLoanRequest= async () =>{
-        const formData= {id: data?.id};
+        const formData= {id: data?._id};
         console.log(formData)
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_request',
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_lend_request',
             formData,
             {
                 headers: {
@@ -133,10 +133,11 @@ const fromAddress= ''
                     Loan Application Details
                 </div>
                 <div>Loanee Crypto Address: {`${data.loaneeAccId}`}</div>
-                <div>amount: {`${data.installments}`}</div>
-                <div>start date: {`${data.start}`}</div>
-                <div>total payment : {`${data.start}`}</div>
-                <div><button onClick={requestOffer}>Propose loan</button></div>
+	        <div>amount: {`${data.amount}`}</div>
+                <div>installments: {`${data.installments}`}</div>
+                <div>total payment : {`${(data.interest*data.amount/100)+amount}`}</div>       
+	        <div>payment dates: {`${data.start}`}</div>
+<div><button onClick={requestOffer}>Propose loan</button></div>
                    
             </div>
             
