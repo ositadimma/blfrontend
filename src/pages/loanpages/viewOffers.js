@@ -23,44 +23,8 @@ const [displayedUserLoans, setDisplayedUserLoans] = useState([])
 const [displayedAllLoans, setDisplayedAllLoans] = useState([]) 
 const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([]) 
 
-const displayedUserLoanRequestsTemp= []
-const displayLoanRequests=(userRequests)=>{
-  for(var i=1;i<userRequests.length; i++){
-    displayedUserLoanRequestsTemp.push(
-        <tr key={userRequests.id}>
-            <td>{userRequests.id}</td>
-            <td>${userRequests.amount}</td>
-            <td>{userRequests.address}</td>
-        </tr>
-    )
- }
- setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
-}
-const displayLoans=(userLoans)=>{
-    for(var i=1;i<userLoans.length; i++){
-      displayedUserLoanRequestsTemp.push(
-          <tr key={userLoans.id}>
-              <td>{userLoans.id}</td>
-              <td>${userLoans.amount}</td>
-              <td>{userLoans.address}</td>
-          </tr>
-      )
-   }
-   setDisplayedUserLoans(displayedUserLoanRequestsTemp)
-  }
 
-const displayAllLoans=(userLoans)=>{
-    for(var i=1;i<userLoans.length; i++){
-      displayedUserLoanRequestsTemp.push(
-          <tr key={userLoans.id}>
-              <td>{userLoans.id}</td>
-              <td>${userLoans.amount}</td>
-              <td>{userLoans.address}</td>
-          </tr>
-      )
-   }
-   setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
-  }
+
 useEffect(() =>{
 	getLoans()
     getLoanRequests()
@@ -142,8 +106,8 @@ const fromAddress= ''
         navigate(redirectTo);
       } 
             
-    const showOfferLoan= async () =>{
-        const redirectTo= '/dashboard/wallet/addaccount'
+    const viewDetails= async () =>{
+        const redirectTo= '/dashboard/wallet/viewdetails'
         navigate(redirectTo);
     } 
     
@@ -151,8 +115,6 @@ const fromAddress= ''
         <div className="wallet">
             <div>
                 <div className="wallet-container">
-                <button onClick={showRequestLoan}>request loan</button>
-                <button onClick={showOfferLoan}>offer loan</button>
                 </div>
                 <div>
                     Your loans
@@ -176,7 +138,7 @@ const fromAddress= ''
                           <td>{request.amount}</td>
                           <td>{request.installments}</td>
                           <td>{request.start} months</td>
-                          <td><button>view offers</button></td>
+                          <td><button onClick={viewDetails} >view Details</button></td>
                         </tr>
                       ))}
                     </tbody>
