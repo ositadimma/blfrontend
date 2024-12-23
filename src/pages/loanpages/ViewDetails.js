@@ -130,9 +130,9 @@ const fromAddress= ''
         navigate(redirectTo);
       } 
             
-    const requestOffer= async () =>{
-        const redirectTo= '/dashboard/lendings/offerrequest/'
-        navigate(redirectTo, {state: data.id});
+    const acceptOffer async () =>{
+        const redirectTo= '/dashboard/lendings/acceptoffer/'
+        navigate(redirectTo, {state: {id: data.id} });
     } 
     
     return(
@@ -154,7 +154,7 @@ const fromAddress= ''
                    ))}
                 </div>
 	    
-<div><button onClick={requestOffer}>Propose loan</button></div>
+<div><button onClick={acceptOffer}>Propose loan</button></div>
                    
             </div>
             
