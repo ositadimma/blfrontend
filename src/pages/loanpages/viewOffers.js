@@ -86,7 +86,7 @@ const fromAddress= ''
     } 
 
     const getLoanRequests= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests',
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_lend_requests',
           {},
             {
                 headers: {
@@ -106,9 +106,9 @@ const fromAddress= ''
         navigate(redirectTo);
       } 
             
-    const viewDetails= async () =>{
+    const viewDetails= async (request) =>{
         const redirectTo= '/dashboard/wallet/viewdetails'
-        navigate(redirectTo);
+        navigate(redirectTo, {state: request} );
     } 
     
     return(
@@ -138,7 +138,7 @@ const fromAddress= ''
                           <td>{request.amount}</td>
                           <td>{request.installments}</td>
                           <td>{request.start} months</td>
-                          <td><button onClick={viewDetails} >view Details</button></td>
+                          <td><button onClick={() =>{viewDetails(request) } >view Details</button></td>
                         </tr>
                       ))}
                     </tbody>
