@@ -32,6 +32,9 @@ const displayedUserLendingsTemp= []
 
 const location = useLocation();
 const data = location.state;
+const month = today.getMonth() + 1; // Months are 0-indexed (0 = January), so add 1
+const day = today.getDate(); // Get the day of the month (1-31)
+const year = today.getFullYear(); 
 
 Var installments=[] 
 For(i=0; i<data.installments; i++) {
