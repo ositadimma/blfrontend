@@ -75,8 +75,15 @@ const fromAddress= ''
         console.log("successful" );
       } 
     const getLoans= async () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans');
-        var objArr= [] 
+      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans',
+        {},
+        {
+            headers: {
+              'bl_auth_token': cookie.bl_auth_token, 
+              'Content-Type': 'application/json',    
+            },
+            }
+      );
         
         setLoans(response.data.data)
         console.log(response.data);
@@ -84,23 +91,11 @@ const fromAddress= ''
     } 
     const viewOffers= async (request) =>{
       navigate('/dashboard/loans/viewoffers', {state: request})
-      // const response = await axios.post('http://localhost:10000/v1/main/api/get_loans',
-      //   {},
-      //   {
-      //       headers: {
-      //         'bl_auth_token': cookie.bl_auth_token, 
-      //         'Content-Type': 'application/json',    
-      //       },
-      //       }
-      // );
-      //   var objArr= [] 
-        
-      //   setLoans(response.data.data)
-      //   console.log(response
-      //     .data);
-      // console.log("successful" );
     } 
+    const viewDetails= async () =>{
+      navigate('/dashboard/loans/viewloandetails', {state: loan})
     
+    } 
 
     const getLoanRequests= async () =>{
         const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests',
@@ -134,12 +129,12 @@ const fromAddress= ''
                 <button onClick={showRequestLoan}>request loan</button>
                 <button onClick={showOfferLoan}>offer loan</button>
                 </div>
+                <h2>
+                    loans
+                </h2>
                 <div>
-                    Your loans
-                </div>
                 <div>
-                <div>
-                  <h2>Loan Details</h2>
+                  <h4>Your active Loan Request(s)</h4>
                   <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr>
@@ -162,9 +157,30 @@ const fromAddress= ''
                     </tbody>
                   </table>
                 </div>
-                    Active loan requests
                 </div>
-                <div></div>
+                <h4>Your active loans</h4>
+                <div>
+                    <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr>
+                        <th>Loanee Address</th>
+                        <th>Amount</th>
+                        <th>number of installments</th>
+                        <th>repayment start time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {loans.map((loan)=>(
+                        <tr>
+                          <td>{loan.loaneeAccId}</td>
+                          <td>{loan.amount}</td>
+                          <td>{loan.installments}</td>
+                          <td><button onClick={viewDetails}>view details</button></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
                 <div>
                     loan History
                 </div>

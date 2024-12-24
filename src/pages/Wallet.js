@@ -2,6 +2,7 @@ import { Web3 } from 'web3';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
+import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
 const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac17e37');
@@ -12,6 +13,7 @@ const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac1
 web3.eth.getBlockNumber().then(console.log);
 
 export default function Wallet() {
+  const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [accounts, setAccounts] = useState([])
 const [accountsLength, setAccountsLength] = useState([])  
@@ -77,13 +79,21 @@ const fromAddress= ''
         }
       };
     const getAccounts= async () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/get_accounts');
+      const response = await axios.post('http://localhost:10000/v1/main/api/get_accounts',
+        {},
+        {
+            headers: {
+              'bl_auth_token': cookie.bl_auth_token, 
+              'Content-Type': 'application/json',    
+            },
+            }
+      );
         var objArr= [] 
-        for(var i=1;i<response.data.length; i++){
-        var balance= await getBalance(response.data.accId);
+        for(var i=1;i<response.data.data.length; i++){
+        var balance= await getBalance(response.data.data[i].accountId);
             
             var obj= {
-                id: response.data.accId,
+                id: response.data.data[i].accountId,
                 balance: balance
             } 
             objArr.push(obj)
@@ -130,8 +140,19 @@ const fromAddress= ''
                     your accounts
                 </div>
                 <div>{displayedAccounts}
+                  {accounts.map((account)=>(
+                      <div>
+                         <div className="amount-card">
+                          <div></div>
+                          <h2>Account Details</h2>
+                          <div>
+                          <h3>Address: <small>{`${account.accountId}`}</small></h3>
+                      </div>
+                    <div className="balance">
+                        {`${account.balance}`}
+                    </div>
                 </div>
-            </div>
+              
             <div>
                 
             </div>

@@ -26,9 +26,7 @@ const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([])
 
 
 useEffect(() =>{
-	getLoans()
     getLoanRequests()
-    getCurrentLoan() 
 	}, [] ) 
 
     const getBalance = async (address) => {
@@ -65,25 +63,8 @@ const fromAddress= ''
           console.error('Error sending Ether:', err);
         }
       };
-      const getCurrentLoan= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan');
-          var objArr= [] 
-          
-          setLoan(response.data.data)
-          setAccountsLength(objArr.length)
-          displayLoans(objArr)
-          console.log(response.data);
-        console.log("successful" );
-      } 
-    const getLoans= async () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans');
-        var objArr= [] 
-        
-        setLoans(response.data.data)
-        displayLoans(objArr)
-        console.log(response.data);
-      console.log("successful" );
-    } 
+    
+
 
     const getLoanRequests= async () =>{
         const response = await axios.post('http://localhost:10000/v1/main/api/get_lend_requests',
@@ -95,7 +76,6 @@ const fromAddress= ''
                 },
                 });
          setLoanRequests(response.data.data)
-          displayLoans(loans)
           console.log(response.data);
         console.log("successful" );
       } 
@@ -107,7 +87,7 @@ const fromAddress= ''
       } 
             
     const viewDetails= async (request) =>{
-        const redirectTo= '/dashboard/wallet/viewdetails'
+        const redirectTo= '/dashboard/loans/viewdetails'
         navigate(redirectTo, {state: request} );
     } 
     
@@ -138,7 +118,7 @@ const fromAddress= ''
                           <td>{request.amount}</td>
                           <td>{request.installments}</td>
                           <td>{request.start} months</td>
-                          <td><button onClick={() =>{viewDetails(request) } >view Details</button></td>
+                          <td><button onClick={() =>{viewDetails(request) }} >view Details</button></td>
                         </tr>
                       ))}
                     </tbody>

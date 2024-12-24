@@ -12,11 +12,14 @@ const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
 
 web3.eth.getBlockNumber().then(console.log);
 
-export default function LoanDetails() {
+export default function ViewDetails() {
     const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [loans, setLoans] = useState([])
+const [currentLoan, setCurrentLoan] = useState({})
+
 const [lendings, setLendings] = useState([]) 
+const [dataState, setDataState] = useState({}) 
 const [paymentDates, setPaymentDates] = useState([])
 const [loanRequests, setLoanRequests] = useState([])
 const [loanRequest, setLoanRequest] = useState({})
@@ -29,23 +32,34 @@ const {id}= useParams();
 const displayedUserLendRequestsTemp= []
 
 const displayedUserLendingsTemp= []
-
+const today= new Date()
 const location = useLocation();
 const data = location.state;
 const month = today.getMonth() + 1; // Months are 0-indexed (0 = January), so add 1
 const day = today.getDate(); // Get the day of the month (1-31)
 const year = today.getFullYear(); 
 
-Var installments=[] 
-For(i=0; i<data.installments; i++) {
-	installments =[...installments, index +1]
-} 
-setPaymentDates(installments) 
+// useEffect(() => {
+//   getData()
+// }, [dataState]);
 useEffect(() =>{
 	getLoans()
     getLoanRequest()
+    getLoanRequests()
+    // getData()
   
 	}, [] ) 
+  // const getData= ()=>{
+  //   if (data) {
+  //     const n = data.installments; // Replace with your desired number
+  //     const numbers = Array.from({ length: n }, (_, i) => i + 1);
+  //     let installments = [];
+  //     for (let i = 0; i < data.installments; i++) {
+  //         installments = [...installments, i + 1];
+  //     }
+  //     setPaymentDates(installments); // Update state only once when 'data' changes
+  // }
+  // }
 
     const getBalance = async (address) => {
         try {
@@ -118,8 +132,23 @@ const fromAddress= ''
     } 
 
     const getLoanRequests= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests');
-         setLendings(response.data.data)
+      const formData= {id: data?.loanId}
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_request',
+          formData,
+          {
+              headers: {
+                'bl_auth_token': cookie.bl_auth_token, 
+                'Content-Type': 'application/json',    
+              },
+              }
+        );
+        var temp= []
+        for (let index = 0; index < response.data.data.installments; index++) {
+          temp = [...temp, index+1];
+          
+        }
+        setPaymentDates(temp)
+         setCurrentLoan(response.data.data)
           console.log(response.data);
         console.log("successful" );
       } 
@@ -130,17 +159,16 @@ const fromAddress= ''
         navigate(redirectTo);
       } 
             
-    const acceptOffer async () =>{
+    const acceptOffer =async () =>{
 	      const response = await axios.post('http://localhost:10000/v1/main/api/loans/accept_offer', 
 						{id: data?._id},
-						headers: {
+						{headers: {
                   'bl_auth_token': cookie.bl_auth_token, 
                   'Content-Type': 'application/json',    
-                })
-                
-        );
+                }})
+          
           console.log(response.data);
-        Alert("offer accepted" );
+        alert("offer accepted" );
         const redirectTo= '/dashboard/loans'
         navigate(redirectTo);
     } 
@@ -151,20 +179,25 @@ const fromAddress= ''
                 <div>
                     Loan Application Details
                 </div>
-                <div>Loanee Crypto Address: {`${data.loaneeAccId}`}</div>
-	        <div>amount: {`${data.amount}`}</div>
-                <div>installments: {`${data.installments}`}</div>
-                <div>total payment : {`${(data.interest*data.amount/100)+amount}`}</div>       
-	        <div>payment dates: {`${data.start}`}</div>
+                <div>Loanee Crypto Address: {`${data?.loaneeAccId}`}</div>
+	        <div>amount: {`${data?.amount}`}</div>
+                <div>installments: {`${currentLoan.installments}`}</div>
+                <div>total payment : {`${parseInt(data?.interest*data?.amount/100)+parseInt(data?.amount)}`}</div>       
+	        <div>payment dates</div>
 	    <div>
-                    {paymentDates?.map((payment, index)=>(
-                        
-                        <div>{`${payment}: `}{`${day}/${(parseInt(month)+parseInt(data?.start)+index)<=12?(parseInt(month)+parseInt(data?.start)+index)+`/${parseInt(year)+1}`:(parseInt(month)+parseInt(data?.start)+index)-12}/${year}`}</div>
-                        
+                    {paymentDates.map((payment, index)=>(
+                        <div>
+                          <div>
+                            {`${payment}: `}{`${day}/${(parseInt(month)+parseInt(data?.start)+index)<=12?(parseInt(month)+parseInt(data?.start)+index)+`/${parseInt(year)+1}`:(parseInt(month)+parseInt(data?.start)+index)-12}/${year}`}
+                          </div>
+                          <div>
+                            Amount due: {(parseInt(data?.interest*data?.amount/100)+parseInt(data?.amount))/currentLoan.installments}
+                          </div>
+                        </div>
                    ))}
                 </div>
 	    
-<div><button onClick={acceptOffer}>Propose loan</button></div>
+<div><button onClick={acceptOffer}>Accept Offer</button></div>
                    
             </div>
             
