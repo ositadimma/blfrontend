@@ -16,7 +16,7 @@ export default function Wallet() {
   const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [accounts, setAccounts] = useState([])
-const [accountsLength, setAccountsLength] = useState([])  
+const [balances, setBalances] = useState([])  
 const [displayedAccounts, setDisplayedAccounts] = useState([]) 
 const displayedAccountsTemp= []
 const displayAccounts=(userAccounts)=>{
@@ -48,14 +48,14 @@ useEffect(() =>{
         try {
           const balance = await web3.eth.getBalance(address);
           console.log(`Balance of ${address}:`, web3.utils.fromWei(balance, 'ether'), 'ETH');
+          return web3.utils.fromWei(balance, 'ether');
         } catch (err) {
           console.error('Error fetching balance:', err);
         }
       };
-	const sendCryp=() =>{
-const fromAddress= '' 
-		const toAddress= '' 
-		const privateKey='' 
+	const sendCryp=(id) =>{
+    navigate('sendmoney', {state: {id: id}})
+
 		
 	} 
 
@@ -88,22 +88,19 @@ const fromAddress= ''
             },
             }
       );
+      setAccounts(response.data.data)
         var objArr= [] 
-        for(var i=1;i<response.data.data.length; i++){
+        for(var i=0;i<response.data.data.length; i++){
         var balance= await getBalance(response.data.data[i].accountId);
             
-            var obj= {
-                id: response.data.data[i].accountId,
-                balance: balance
-            } 
-            objArr.push(obj)
+           objArr.push(balance)
             
             
         } 
         
-        setAccounts(objArr)
-        setAccountsLength(objArr.length)
-        displayAccounts(objArr)
+        setBalances(objArr)
+        console.log(objArr)
+        console.log(balances)
         console.log(response.data);
       console.log("successful" );
     } 
@@ -124,41 +121,37 @@ const fromAddress= ''
         <div className="wallet">
             <div>
                 <div className="wallet-container">
-                <button onClick={showCreateAccount}>create new account</button>
-                <button onClick={showAddAccount}>add account</button>
-                    {/* <div>
-                    <label>Balance</label>
-                        <select style={{float: "right"}}>
-                            <option>BTC</option>
-                        </select>
-                    </div>
-                    <div className="balance">
-                        2000.00
-                    </div> */}
+                  <button onClick={showCreateAccount}>create new account</button>
+                  <button onClick={showAddAccount}>add account</button>
                 </div>
                 <div>
                     your accounts
                 </div>
-                <div>{displayedAccounts}
-                  {accounts.map((account)=>(
+                <div>
+                  {accounts.map((account, i)=>(
                       <div>
                          <div className="amount-card">
-                          <div></div>
-                          <h2>Account Details</h2>
+                            <div></div>
+                            <h2>Account Details</h2>
+                            <div>
+                              <h3>Address: <small>{`${account.accountId}`}</small></h3>
+                            </div>
+                            <div >
+                             <h3>Balance: <small>{`${balances[i]}`}</small></h3>  
+                            </div>
+                            <div>
+                            <button onClick={()=>{sendCryp(account.accountId)}}>Transfer Crypto</button> 
+                          </div>
+                          </div>
                           <div>
-                          <h3>Address: <small>{`${account.accountId}`}</small></h3>
+                          </div>
+                          <div>
+                              
+                          </div>
                       </div>
-                    <div className="balance">
-                        {`${account.balance}`}
-                    </div>
+                   ))}
                 </div>
-              
-            <div>
-                
-            </div>
-            <div>
-                
-            </div>
-        </div>
+                </div>
+                </div>
     )
 } 

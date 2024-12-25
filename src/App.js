@@ -23,6 +23,7 @@ import OfferRequest from './pages/loanpages/offerRequest';
 import ReviewProposal from './pages/loanpages/reviewProposal';
 import ViewOffers from './pages/loanpages/viewOffers';
 import ViewDetails from './pages/loanpages/ViewDetails';
+import SendMoney from './pages/walletPages/sendMoney';
 
 const router= createBrowserRouter(
   createRoutesFromElements(
@@ -49,7 +50,7 @@ const router= createBrowserRouter(
         <Route path='/dashboard/loans/viewdetails' element={<ViewDetails/>}/>
         <Route path='/dashboard/lendings/offerrequest' element={<OfferRequest/>}/> 
         <Route path='/dashboard/lending/reviewproposal' element={<ReviewProposal/>}/> 
-        <Route path='/dashboard/' element={<></>}/>
+        <Route path='/dashboard/wallet/sendmoney' element={<SendMoney/>}/>
         <Route path='/dashboard/' element={<></>}/>
       </Route>
     </Route>

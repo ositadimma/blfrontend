@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useParams, useLoca
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
+import { ethers } from "ethers";
+import contractABI from "./contracts/ScheduledAutoTransfer.json";
+
 
 // private RPC endpoint
 const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
@@ -19,15 +22,78 @@ const [loans, setLoans] = useState([])
 const [currentLoan, setCurrentLoan] = useState({})
 
 const [lendings, setLendings] = useState([]) 
-const [dataState, setDataState] = useState({}) 
 const [paymentDates, setPaymentDates] = useState([])
-const [loanRequests, setLoanRequests] = useState([])
 const [loanRequest, setLoanRequest] = useState({})
-const [accountsLength, setAccountsLength] = useState([])  
-const [displayedUserLendings, setDisplayedUserLendings] = useState([]) 
-const [displayedAllLendings, setDisplayedAllLendings] = useState([]) 
-const [displayedUserLendRequests, setDisplayedUserLendRequests] = useState([]) 
+const [provider, setProvider] = useState(null);
+const [signer, setSigner] = useState(null);
+const [contract, setContract] = useState(null);
+const [balance, setBalance] = useState(0);
+const [amount, setAmount] = useState("");
+const [recipient, setRecipient] = useState("");
+
+// Connect to MetaMask
+const connectWallet = async () => {
+  if (window.ethereum) {
+    try {
+      // Request account access
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      const web3Signer = web3Provider.getSigner();
+      const deployedContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        contractABI.abi,
+        web3Signer
+      );
+
+      setProvider(web3Provider);
+      setSigner(web3Signer);
+      setContract(deployedContract);
+    } catch (err) {
+      console.error("Wallet connection failed:", err);
+    }
+  } else {
+    alert("MetaMask not found! Please install MetaMask.");
+  }
+};
+
+// Fetch contract balance
+const getBalance = async () => {
+  if (contract) {
+    const balance = await contract.getBalance();
+    setBalance(ethers.utils.formatEther(balance));
+  }
+};
+
+// Execute transfer
+const executeTransfer = async () => {
+  if (contract) {
+    try {
+      const tx = await contract.executeTransfer(ethers.utils.parseEther(amount));
+      await tx.wait();
+      alert("Transfer executed!");
+      getBalance(); // Refresh balance
+    } catch (err) {
+      console.error("Transfer failed:", err);
+    }
+  }
+};
+
+// Update recipient
+const updateRecipient = async () => {
+  if (contract) {
+    try {
+      const tx = await contract.updateRecipient(recipient);
+      await tx.wait();
+      alert("Recipient updated!");
+    } catch (err) {
+      console.error("Recipient update failed:", err);
+    }
+  }
+};
+
 const {id}= useParams();
+const CONTRACT_ADDRESS = "0xYourContractAddressHere"; // Replace with deployed address
 
 const displayedUserLendRequestsTemp= []
 
@@ -61,14 +127,14 @@ useEffect(() =>{
   // }
   // }
 
-    const getBalance = async (address) => {
-        try {
-          const balance = await web3.eth.getBalance(address);
-          console.log(`Balance of ${address}:`, web3.utils.fromWei(balance, 'ether'), 'ETH');
-        } catch (err) {
-          console.error('Error fetching balance:', err);
-        }
-      };
+    // const getBalance = async (address) => {
+    //     try {
+    //       const balance = await web3.eth.getBalance(address);
+    //       console.log(`Balance of ${address}:`, web3.utils.fromWei(balance, 'ether'), 'ETH');
+    //     } catch (err) {
+    //       console.error('Error fetching balance:', err);
+    //     }
+    //   };
 	const sendCryp=() =>{
 const fromAddress= '' 
 		const toAddress= '' 
@@ -160,6 +226,7 @@ const fromAddress= ''
       } 
             
     const acceptOffer =async () =>{
+      executeTransfer();
 	      const response = await axios.post('http://localhost:10000/v1/main/api/loans/accept_offer', 
 						{id: data?._id},
 						{headers: {
@@ -168,6 +235,7 @@ const fromAddress= ''
                 }})
           
           console.log(response.data);
+
         alert("offer accepted" );
         const redirectTo= '/dashboard/loans'
         navigate(redirectTo);
@@ -200,7 +268,38 @@ const fromAddress= ''
 <div><button onClick={acceptOffer}>Accept Offer</button></div>
                    
             </div>
-            
+            {/* <div style={{ padding: "20px" }}>
+      <h1>Scheduled Auto Transfer</h1>
+      <button onClick={connectWallet}>Connect Wallet</button>
+      <h2>Contract Balance: {balance} ETH</h2>
+      <div>
+        <h3>Execute Transfer</h3>
+        <input
+          type="text"
+          placeholder="Amount in ETH"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <button onClick={executeTransfer}>Transfer</button>
+      </div>
+      <div>
+        <h3>Update Recipient</h3>
+        <input
+          type="text"
+          placeholder="New Recipient Address"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+        />
+        <button onClick={updateRecipient}>Update</button>
+      </div>
+    </div> */}
         </div>
     )
 } 
+
+
+
+
+
+
+
