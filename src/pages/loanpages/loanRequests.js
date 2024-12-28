@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
-
+// const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('http://127.0.0.1:7545');
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');
 
@@ -30,18 +30,6 @@ const showDetails= (id)=>{
     const data= {id: id}
     navigate(redirectTo, {state: data})
 }
-const displayLoanRequests=(userRequests)=>{
-  for(var i=1;i<userRequests.length; i++){
-    displayedUserLoanRequestsTemp.push(
-        <tr key={userRequests.id}>
-            <td>{userRequests.id}</td>
-            <td>${userRequests.amount}</td>
-            <td>{userRequests.address}</td>
-        </tr>
-    )
- }
- setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
-}
 const displayLoans=(userLoans)=>{
     for(var i=1;i<userLoans.length; i++){
       displayedUserLoanRequestsTemp.push(
@@ -55,20 +43,9 @@ const displayLoans=(userLoans)=>{
    setDisplayedUserLoans(displayedUserLoanRequestsTemp)
   }
 
-const displayAllLoans=(userLoans)=>{
-    for(var i=1;i<userLoans.length; i++){
-      displayedUserLoanRequestsTemp.push(
-          <tr key={userLoans.id}>
-              <td>{userLoans.id}</td>
-              <td>${userLoans.amount}</td>
-              <td>{userLoans.address}</td>
-          </tr>
-      )
-   }
-   setDisplayedUserLoanRequests(displayedUserLoanRequestsTemp)
-  }
+
 useEffect(() =>{
-	getLoans()
+	// getLoans()
     getLoanRequests()
     getCurrentLoan() 
 	}, [] ) 
@@ -88,27 +65,18 @@ const fromAddress= ''
 		
 	} 
 
-      const sendEther = async (fromAddress, toAddress, privateKey, amount) => {
-        try {
-          const transaction = {
-            from: fromAddress,
-            to: toAddress,
-            value: web3.utils.toWei(amount.toString(), 'ether'),
-            gas: 21000, // Standard gas limit for ETH transfer
-          };
-      
-          // Sign the transaction
-          const signedTransaction = await web3.eth.accounts.signTransaction(transaction, privateKey);
-      
-          // Send the signed transaction
-          const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-          console.log('Transaction successful:', receipt.transactionHash);
-        } catch (err) {
-          console.error('Error sending Ether:', err);
-        }
-      };
+    
       const getCurrentLoan= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan');
+        try{
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan',
+          {},
+          {
+              headers: {
+                'bl_auth_token': cookie.bl_auth_token, 
+                'Content-Type': 'application/json',    
+              },
+              }
+        );
           var objArr= [] 
           
           setLoan(response.data.data)
@@ -116,18 +84,28 @@ const fromAddress= ''
           displayLoans(objArr)
           console.log(response.data);
         console.log("successful" );
+      } catch (err) {
+          // Handling errors here
+          if (err.response) {
+            // The server responded with a status other than 2xx
+            if (err.response.status === 400) {
+              alert('Bad Request: Invalid data provided');
+            } else {
+              alert(`Error: ${err.response.status}`);
+            }
+          } else if (err.request) {
+            // The request was made but no response was received
+            alert('No response from server');
+          } else {
+            // Something else went wrong during the setup of the request
+            alert('Error: ' + err.message);
+          }
+        }
       } 
-    const getLoans= async () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans');
-        var objArr= [] 
-        
-        setLoans(response.data.data)
-        displayLoans(objArr)
-        console.log(response.data);
-      console.log("successful" );
-    } 
+   
 
     const getLoanRequests= async () =>{
+      try{
         const response = await axios.post('http://localhost:10000/v1/main/api/get_all_loan_requests',
             formData,
             {
@@ -140,6 +118,23 @@ const fromAddress= ''
          setLoanRequests(response.data.data)
           console.log(response.data);
         console.log("successful" );
+      } catch (err) {
+        // Handling errors here
+        if (err.response) {
+          // The server responded with a status other than 2xx
+          if (err.response.status === 400) {
+            alert('Bad Request: Invalid data provided');
+          } else {
+            alert(`Error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          alert('No response from server');
+        } else {
+          // Something else went wrong during the setup of the request
+          alert('Error: ' + err.message);
+        }
+      }
         
       } 
 
@@ -156,6 +151,7 @@ const fromAddress= ''
     
     return(
         <div className="wallet">
+          {loanRequests==0?<h6>No Active Loan Requests</h6>: 
             <div>
                 <div>
                 <div>
@@ -172,12 +168,16 @@ const fromAddress= ''
                   </thead>
                   <tbody>
                     {loanRequests.map((request)=>(
+                      request.completed==true?'':
                       <tr>
                       <td>{request.loaneeAccId}</td>
                       <td>{request.amount}</td>
                       <td>{request.installments}</td>
                       <td>{request.start} month(s)</td>
-                      <td><button onClick={()=>{showDetails(request._id)}}>view details</button></td>
+                      <td>
+                        <button onClick={()=>{showDetails(request._id)}}>view details</button>
+                        <button>borrower assessment</button>
+                      </td>
                       </tr>
                     )
 
@@ -187,13 +187,7 @@ const fromAddress= ''
                 </div>
                 </div>
                 <div></div>
+            </div>}
             </div>
-            <div>
-                
-            </div>
-            <div>
-                
-            </div>
-        </div>
     )
 } 

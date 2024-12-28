@@ -4,11 +4,10 @@ import React, { useState, useEffect } from "react"
 import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
 import { ethers } from "ethers";
-import contractABI from "./contracts/ScheduledAutoTransfer.json";
-
+import { contractABI, contractAddress } from "../../contractConfig.js";
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('http://localhost:7545');
 
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');
@@ -32,52 +31,52 @@ const [amount, setAmount] = useState("");
 const [recipient, setRecipient] = useState("");
 
 // Connect to MetaMask
-const connectWallet = async () => {
-  if (window.ethereum) {
-    try {
-      // Request account access
-      await window.ethereum.request({ method: "eth_requestAccounts" });
+// const connectWallet = async () => {
+//   if (window.ethereum) {
+//     try {
+//       // Request account access
+//       await window.ethereum.request({ method: "eth_requestAccounts" });
 
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const web3Signer = web3Provider.getSigner();
-      const deployedContract = new ethers.Contract(
-        CONTRACT_ADDRESS,
-        contractABI.abi,
-        web3Signer
-      );
+//       const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+//       const web3Signer = web3Provider.getSigner();
+//       const deployedContract = new ethers.Contract(
+//         CONTRACT_ADDRESS,
+//         contractABI.abi,
+//         web3Signer
+//       );
 
-      setProvider(web3Provider);
-      setSigner(web3Signer);
-      setContract(deployedContract);
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-    }
-  } else {
-    alert("MetaMask not found! Please install MetaMask.");
-  }
-};
+//       setProvider(web3Provider);
+//       setSigner(web3Signer);
+//       setContract(deployedContract);
+//     } catch (err) {
+//       console.error("Wallet connection failed:", err);
+//     }
+//   } else {
+//     alert("MetaMask not found! Please install MetaMask.");
+//   }
+// };
 
 // Fetch contract balance
-const getBalance = async () => {
-  if (contract) {
-    const balance = await contract.getBalance();
-    setBalance(ethers.utils.formatEther(balance));
-  }
-};
+// const getBalance = async () => {
+//   if (contract) {
+//     const balance = await contract.getBalance();
+//     setBalance(ethers.utils.formatEther(balance));
+//   }
+// };
 
 // Execute transfer
-const executeTransfer = async () => {
-  if (contract) {
-    try {
-      const tx = await contract.executeTransfer(ethers.utils.parseEther(amount));
-      await tx.wait();
-      alert("Transfer executed!");
-      getBalance(); // Refresh balance
-    } catch (err) {
-      console.error("Transfer failed:", err);
-    }
-  }
-};
+// const executeTransfer = async () => {
+//   if (contract) {
+//     try {
+//       const tx = await contract.executeTransfer(ethers.utils.parseEther(amount));
+//       await tx.wait();
+//       alert("Transfer executed!");
+//       getBalance(); // Refresh balance
+//     } catch (err) {
+//       console.error("Transfer failed:", err);
+//     }
+//   }
+// };
 
 // Update recipient
 const updateRecipient = async () => {
@@ -189,15 +188,42 @@ const fromAddress= ''
         console.log("successful" );
       } 
     const getLoans= async () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans');
+      try{
+      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans',
+        {},
+        {
+          headers: {
+            'bl_auth_token': cookie.bl_auth_token, 
+            'Content-Type': 'application/json',    
+          },
+          }
+      );
         var objArr= [] 
         
         setLoans(response.data.data)
         console.log(response.data);
       console.log("successful" );
+    } catch (err) {
+      // Handling errors here
+      if (err.response) {
+        // The server responded with a status other than 2xx
+        if (err.response.status === 400) {
+          alert('Bad Request: Invalid data provided');
+        } else {
+          alert(`Error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        alert('No response from server');
+      } else {
+        // Something else went wrong during the setup of the request
+        alert('Error: ' + err.message);
+      }
+    }
     } 
 
     const getLoanRequests= async () =>{
+      try{
       const formData= {id: data?.loanId}
         const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_request',
           formData,
@@ -217,6 +243,23 @@ const fromAddress= ''
          setCurrentLoan(response.data.data)
           console.log(response.data);
         console.log("successful" );
+      } catch (err) {
+        // Handling errors here
+        if (err.response) {
+          // The server responded with a status other than 2xx
+          if (err.response.status === 400) {
+            alert('Bad Request: Invalid data provided');
+          } else {
+            alert(`Error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          alert('No response from server');
+        } else {
+          // Something else went wrong during the setup of the request
+          alert('Error: ' + err.message);
+        }
+      }
       } 
 
       
@@ -226,8 +269,9 @@ const fromAddress= ''
       } 
             
     const acceptOffer =async () =>{
-      executeTransfer();
-	      const response = await axios.post('http://localhost:10000/v1/main/api/loans/accept_offer', 
+      try{
+      // executeTransfer();
+	      const response = await axios.post('http://localhost:10000/v1/main/api/loans/accept_lend_offer', 
 						{id: data?._id},
 						{headers: {
                   'bl_auth_token': cookie.bl_auth_token, 
@@ -239,33 +283,51 @@ const fromAddress= ''
         alert("offer accepted" );
         const redirectTo= '/dashboard/loans'
         navigate(redirectTo);
+      } catch (err) {
+        // Handling errors here
+        if (err.response) {
+          // The server responded with a status other than 2xx
+          if (err.response.status === 400) {
+            alert('Bad Request: Invalid data provided');
+          } else {
+            alert(`Error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          alert('No response from server');
+        } else {
+          // Something else went wrong during the setup of the request
+          alert('Error: ' + err.message);
+        }
+      }
     } 
     
     return(
         <div className="wallet">
             <div>
-                <div>
+                <h4>
                     Loan Application Details
-                </div>
+                </h4>
                 <div>Loanee Crypto Address: {`${data?.loaneeAccId}`}</div>
 	        <div>amount: {`${data?.amount}`}</div>
                 <div>installments: {`${currentLoan.installments}`}</div>
                 <div>total payment : {`${parseInt(data?.interest*data?.amount/100)+parseInt(data?.amount)}`}</div>       
 	        <div>payment dates</div>
-	    <div>
-                    {paymentDates.map((payment, index)=>(
-                        <div>
-                          <div>
-                            {`${payment}: `}{`${day}/${(parseInt(month)+parseInt(data?.start)+index)<=12?(parseInt(month)+parseInt(data?.start)+index)+`/${parseInt(year)+1}`:(parseInt(month)+parseInt(data?.start)+index)-12}/${year}`}
-                          </div>
-                          <div>
-                            Amount due: {(parseInt(data?.interest*data?.amount/100)+parseInt(data?.amount))/currentLoan.installments}
-                          </div>
-                        </div>
-                   ))}
-                </div>
-	    
-<div><button onClick={acceptOffer}>Accept Offer</button></div>
+	        <div>
+              {paymentDates.map((payment, index)=>(
+                  <div>
+                    <div>
+                      {`${payment}: `}{`${day}/${(parseInt(month)+parseInt(data?.start)+index)<=12?(parseInt(month)+parseInt(data?.start)+index)+`/${parseInt(year)+1}`:(parseInt(month)+parseInt(data?.start)+index)-12}/${year}`}
+                    </div>
+                    <div>
+                      Amount due: {(parseInt(data?.interest*data?.amount/100)+parseInt(data?.amount))/currentLoan.installments} ETH
+                    </div>
+                  </div>
+            ))}
+          </div>  
+          <div>
+          {data.accepted==true?<h4>Offer accepted</h4>: <button onClick={acceptOffer}>Accept Offer</button>} 
+          </div>
                    
             </div>
             {/* <div style={{ padding: "20px" }}>

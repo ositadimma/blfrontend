@@ -110,9 +110,9 @@ function isValidPrivateKey(privateKey, expectedAddress) {
           console.log(response)
           if(response.data){
           console.log(response.data);
-          console.log("Account added successfully", );
-          alert("Account added successfully!");
-          navigate("/dashboard/wallet");
+          console.log("Loan Request Submitted", );
+          alert("Loan Request Submitted");
+          navigate("/dashboard/loans");
          } else {
           alert(response.error);
          }

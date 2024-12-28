@@ -24,7 +24,7 @@ const Header = () => {
   <rect width="250" height="100" fill="#2a2a52"/>
 
  
-  <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#fcfcf5" text-anchor="middle" alignment-baseline="central">
+  <text x="50%" y="50%" fontFamily="Arial, sans-serif" font-size="48" font-weight="bold" fill="#fcfcf5" text-anchor="middle" alignment-baseline="central">
     BlockLend
   </text>
 

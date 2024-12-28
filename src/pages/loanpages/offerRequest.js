@@ -25,9 +25,9 @@ const OfferRequest = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.interest.trim()) newErrors.installments = "number of installments is required.";
+    if (!formData.interest.trim()) newErrors.interest = "proposed interest is required.";
     if (!formData.start.trim()) newErrors.start = "Payment start time is required.";
-    
+    if (!formData.accId.trim()) newErrors.accId = "Account to lend from is required.";
     return newErrors;
   };
  
@@ -82,13 +82,67 @@ function isValidPrivateKey(privateKey, expectedAddress) {
 }
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(data)
-    formData.id= data
-    const redirectTo= '/dashboard/lending/reviewproposal'
-    navigate(redirectTo, {state: formData}) 
-    } 
+
+
+
+
+
+
+
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const validationErrors = validate();
+  if (Object.keys(validationErrors).length === 0) {
+    try{
+      console.log(data)
+      formData.id= data
+      const redirectTo= '/dashboard/lending/reviewproposal'
+      navigate(redirectTo, {state: formData}) 
+
+    }  catch (err) {
+      // Handling errors here
+      if (err.response) {
+        // The server responded with a status other than 2xx
+        if (err.response.status === 400) {
+          alert('Bad Request: Invalid data provided');
+        } else {
+          alert(`Error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        alert('No response from server');
+      } else {
+        // Something else went wrong during the setup of the request
+        alert('Error: ' + err.message);
+      }
+    }
+   
+  } else {
+    setErrors(validationErrors);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      
    
 
@@ -114,7 +168,9 @@ function isValidPrivateKey(privateKey, expectedAddress) {
             <option value={40}>40%</option>
             <option value={50}>50%</option>
         </select>
+        <small style={{color: 'red'}}>{errors.interest}</small>
         </div>
+        
         <div className="form-group">
       <label >Choose payment start time *:</label>
         <select
@@ -132,11 +188,13 @@ function isValidPrivateKey(privateKey, expectedAddress) {
             <option value={6}>6 months</option>
             <option value={12}>1 year</option>
         </select>
+        <small style={{color: 'red'}}>{errors.start}</small>
         </div>
         <div>
           <label>Select Account to lend from</label>
           {<LoanOptions accounts={accounts} value={formData.accId} onChange={handleChange} field='accId'/>}
         </div>
+        <small style={{color: 'red'}}>{errors.accId}</small>
       <button type="submit" className="submit-button">Review Proposal</button>
     </form>
   </div>

@@ -1,11 +1,12 @@
 import { Web3 } from 'web3';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+// const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('http://127.0.0.1:7545');
 
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');
@@ -28,52 +29,11 @@ const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([])
 useEffect(() =>{
 	getLoans()
     getLoanRequests()
-    getCurrentLoan() 
+    // getCurrentLoan() 
 	}, [] ) 
 
-    const getBalance = async (address) => {
-        try {
-          const balance = await web3.eth.getBalance(address);
-          console.log(`Balance of ${address}:`, web3.utils.fromWei(balance, 'ether'), 'ETH');
-        } catch (err) {
-          console.error('Error fetching balance:', err);
-        }
-      };
-	const sendCryp=() =>{
-const fromAddress= '' 
-		const toAddress= '' 
-		const privateKey='' 
-		
-	} 
+   
 
-      const sendEther = async (fromAddress, toAddress, privateKey, amount) => {
-        try {
-          const transaction = {
-            from: fromAddress,
-            to: toAddress,
-            value: web3.utils.toWei(amount.toString(), 'ether'),
-            gas: 21000, // Standard gas limit for ETH transfer
-          };
-      
-          // Sign the transaction
-          const signedTransaction = await web3.eth.accounts.signTransaction(transaction, privateKey);
-      
-          // Send the signed transaction
-          const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-          console.log('Transaction successful:', receipt.transactionHash);
-        } catch (err) {
-          console.error('Error sending Ether:', err);
-        }
-      };
-      const getCurrentLoan= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan');
-          var objArr= [] 
-          
-          setLoan(response.data.data)
-          setAccountsLength(objArr.length)
-          console.log(response.data);
-        console.log("successful" );
-      } 
     const getLoans= async () =>{
       const response = await axios.post('http://localhost:10000/v1/main/api/get_loans',
         {},
@@ -92,12 +52,17 @@ const fromAddress= ''
     const viewOffers= async (request) =>{
       navigate('/dashboard/loans/viewoffers', {state: request})
     } 
-    const viewDetails= async () =>{
-      navigate('/dashboard/loans/viewloandetails', {state: loan})
+    const viewDetails= async (singleLoan) =>{
+      navigate('/dashboard/loans/viewloandetails', {state: singleLoan})
+    
+    } 
+    const repayLoan= async (singleLoan) =>{
+      navigate('/dashboard/loans/repayloan', {state: singleLoan})
     
     } 
 
     const getLoanRequests= async () =>{
+      try{
         const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests',
           {},
             {
@@ -109,6 +74,23 @@ const fromAddress= ''
          setLoanRequests(response.data.data)
           console.log(response.data);
         console.log("successful" );
+      } catch (err) {
+        // Handling errors here
+        if (err.response) {
+          // The server responded with a status other than 2xx
+          if (err.response.status === 400) {
+            alert('Bad Request: Invalid data provided');
+          } else {
+            alert(`Error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          alert('No response from server');
+        } else {
+          // Something else went wrong during the setup of the request
+          alert('Error: ' + err.message);
+        }
+      }
       } 
 
       
@@ -129,11 +111,13 @@ const fromAddress= ''
                 <button onClick={showRequestLoan}>request loan</button>
                 <button onClick={showOfferLoan}>offer loan</button>
                 </div>
-                <h2>
-                    loans
-                </h2>
+                <h4>
+                   Your Loan Requests
+                </h4>
                 <div>
+                {loanRequests.length==0?<h6>No active loan request</h6>:
                 <div>
+                  
                   <h4>Your active Loan Request(s)</h4>
                   <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                     <thead>
@@ -156,33 +140,38 @@ const fromAddress= ''
                       ))}
                     </tbody>
                   </table>
+                </div>}
+                <h4>Your Loans</h4>
                 </div>
-                </div>
-                <h4>Your active loans</h4>
+                {loans?.length==0?<h6>No active loans</h6>:
                 <div>
+                  <h4>Your active loans</h4>
                     <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr>
+                      <th>Loaner Address</th>
                         <th>Loanee Address</th>
                         <th>Amount</th>
-                        <th>number of installments</th>
-                        <th>repayment start time</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {loans.map((loan)=>(
+                      {loans?.map((loan)=>(
                         <tr>
+                          <td>{loan.loanerAccId}</td>
                           <td>{loan.loaneeAccId}</td>
                           <td>{loan.amount}</td>
-                          <td>{loan.installments}</td>
-                          <td><button onClick={viewDetails}>view details</button></td>
+                          <td>
+                            <button onClick={()=>viewDetails(loan)}>view details</button>
+                            <button onClick={()=>repayLoan(loan)}>Repay Loan</button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </div>}
                 <div>
-                    loan History
+                  <h4>Your Loan History</h4>  
                 </div>
                 <div></div>
             </div>

@@ -1,14 +1,15 @@
 import { Web3 } from 'web3';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react"
 import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
-
+// const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('http://127.0.0.1:7545');
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');
+
 
 web3.eth.getBlockNumber().then(console.log);
 
@@ -22,6 +23,10 @@ const [accountsLength, setAccountsLength] = useState([])
 const [displayedUserLoans, setDisplayedUserLoans] = useState([]) 
 const [displayedAllLoans, setDisplayedAllLoans] = useState([]) 
 const [displayedUserLoanRequests, setDisplayedUserLoanRequests] = useState([]) 
+
+const location = useLocation();
+const data = location.state;
+console.log(data)
 
 
 
@@ -67,8 +72,8 @@ const fromAddress= ''
 
 
     const getLoanRequests= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_lend_requests',
-          {},
+        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_lend_requests',
+          {id: data?._id},
             {
                 headers: {
                   'bl_auth_token': cookie.bl_auth_token, 
@@ -96,19 +101,20 @@ const fromAddress= ''
             <div>
                 <div className="wallet-container">
                 </div>
+                <h3>
+                    Loan Offers for you
+                </h3>
                 <div>
-                    Your loans
-                </div>
                 <div>
-                <div>
-                  <h2>Loan Details</h2>
+                  <h4>Details</h4>
                   <table border="1" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr>
                         <th>Loanee Address</th>
                         <th>Amount</th>
-                        <th>number of installments</th>
                         <th>repayment start time</th>
+                        <th>action</th>
+                        <th>status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -116,9 +122,9 @@ const fromAddress= ''
                         <tr>
                           <td>{request.loaneeAccId}</td>
                           <td>{request.amount}</td>
-                          <td>{request.installments}</td>
                           <td>{request.start} months</td>
                           <td><button onClick={() =>{viewDetails(request) }} >view Details</button></td>
+                          <td>{request.accepted==true?'accepted': 'confirmation pending'}</td>
                         </tr>
                       ))}
                     </tbody>

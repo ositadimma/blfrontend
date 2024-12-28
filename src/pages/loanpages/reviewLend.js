@@ -12,7 +12,7 @@ const web3 = new Web3('http://127.0.0.1:7545');
 
 web3.eth.getBlockNumber().then(console.log);
 
-export default function ReviewProposal() {
+export default function ReviewLend() {
     const [cookie, setCookie] = useCookies(["bl_auth_token"]);
   const navigate = useNavigate();
 const [loans, setLoans] = useState([])
@@ -171,25 +171,14 @@ const fromAddress= ''
     return(
         <div className="wallet">
             <div>
-                <h2>
+            <h2>
                     Loan Proposal Details
                 </h2>
-                <div>Loanee Address: {`${loanRequest?.loaneeAccId}`}</div>
-                <div>amount: {`${loanRequest?.amount}`}</div>
-                <div>installments: {`${loanRequest?.installments}`}</div>
-                <div>start date: {`${data?.start}`}</div>
-                <div>interest: {`${data?.interest}`}%</div>
-                <h3>Payments</h3>
-                <div>
-                    {payments?.map((payment, index)=>(
-                       <div>
-                        <h4>{`${payment}: `}{`${day}/${(parseInt(month)+parseInt(data?.start)+index)<=12?(parseInt(month)+parseInt(data?.start)+index)+`/${parseInt(year)+1}`:(parseInt(month)+parseInt(data?.start)+index)-12}/${year}`}</h4>
-                        <h5>{((parseInt(loanRequest?.amount)*parseInt(data?.interest)/100)+parseInt(loanRequest?.amount))/parseInt(loanRequest?.installments)} ETH</h5>
-                        </div>
-                   ))}
-                </div>
-                <div><button onClick={submitRequest}>submit</button></div>
-                  
+                <div>Loanee Address: {`${data?.lend.loaneeAccId}`}</div>
+                <div>amount: {`${data?.lend.amount}`}</div>
+                <div>installments: {`${data?.loan.installments}`}</div>
+                <div>start date: {`${data?.lend.start}`}</div>
+                <div>interest: {`${data?.lend.interest}`}</div>
             </div>
             
         </div>

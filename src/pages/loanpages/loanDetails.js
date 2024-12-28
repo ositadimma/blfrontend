@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
-
+// const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_ID');
+const web3 = new Web3('http://127.0.0.1:7545');
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');
 
@@ -53,27 +53,9 @@ const fromAddress= ''
 		
 	} 
 
-      const sendEther = async (fromAddress, toAddress, privateKey, amount) => {
-        try {
-          const transaction = {
-            from: fromAddress,
-            to: toAddress,
-            value: web3.utils.toWei(amount.toString(), 'ether'),
-            gas: 21000, // Standard gas limit for ETH transfer
-          };
-      
-          // Sign the transaction
-          const signedTransaction = await web3.eth.accounts.signTransaction(transaction, privateKey);
-      
-          // Send the signed transaction
-          const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-          console.log('Transaction successful:', receipt.transactionHash);
-        } catch (err) {
-          console.error('Error sending Ether:', err);
-        }
-      };
       
       const getLoanRequest= async () =>{
+        try{
         const formData= {id: data?.id};
         console.log(formData)
         const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_request',
@@ -89,37 +71,62 @@ const fromAddress= ''
          setLoanRequest(response.data.data)
           console.log(response.data);
         console.log("successful" );
+      } catch (err) {
+        // Handling errors here
+        if (err.response) {
+          // The server responded with a status other than 2xx
+          if (err.response.status === 400) {
+            alert('Bad Request: Invalid data provided');
+          } else {
+            alert(`Error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          alert('No response from server');
+        } else {
+          // Something else went wrong during the setup of the request
+          alert('Error: ' + err.message);
+        }
+      }
         
       } 
-      const getDetails= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan');
-          var objArr= [] 
-          
-          setLendings(response.data.data)
-          console.log(response.data);
-        console.log("successful" );
-      } 
+    
     const getLoans= async () =>{
-      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans');
+      try{
+      const response = await axios.post('http://localhost:10000/v1/main/api/get_loans',
+        {},
+            {
+                headers: {
+                  'bl_auth_token': cookie.bl_auth_token, 
+                  'Content-Type': 'application/json',    
+                },
+                }
+      );
         var objArr= [] 
         
         setLoans(response.data.data)
         console.log(response.data);
       console.log("successful" );
+    } catch (err) {
+      // Handling errors here
+      if (err.response) {
+        // The server responded with a status other than 2xx
+        if (err.response.status === 400) {
+          alert('Bad Request: Invalid data provided');
+        } else {
+          alert(`Error: ${err.response.status}`);
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        alert('No response from server');
+      } else {
+        // Something else went wrong during the setup of the request
+        alert('Error: ' + err.message);
+      }
+    }
     } 
 
-    const getLoanRequests= async () =>{
-        const response = await axios.post('http://localhost:10000/v1/main/api/get_loan_requests');
-         setLendings(response.data.data)
-          console.log(response.data);
-        console.log("successful" );
-      } 
-
-      
-    const showLoanRequest= async () =>{
-        const redirectTo= '/dashboard/loans/loanrequests'
-        navigate(redirectTo);
-      } 
+  
             
     const requestOffer= async () =>{
         const redirectTo= '/dashboard/lendings/offerrequest/'
@@ -135,7 +142,7 @@ const fromAddress= ''
                 <div>Loanee Crypto Address: {`${loanRequest.loaneeAccId}`}</div>
                 <div>amount: {`${loanRequest.installments}`}</div>
                 <div>installments: {`${loanRequest.installments}`}</div>
-                <div>start date: {`${loanRequest.start}`}</div>
+                <div>start date: {`${loanRequest.start} month(s)`}</div>
                 <div><button onClick={requestOffer}>Propose loan</button></div>
                    
             </div>

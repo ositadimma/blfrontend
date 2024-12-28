@@ -47,6 +47,9 @@ export default function Home() {
         }
       };
       const getAccounts= async () =>{
+        try{
+
+        
         const response = await axios.post('http://localhost:10000/v1/main/api/get_accounts', 
             formData,
             {
@@ -59,14 +62,35 @@ export default function Home() {
           var objArr= [] 
           console.log(response.data)
           setAccounts(response.data.data)
-          setCurrentAccount(response.data.data[0].accountId)
+          if(response.data.data.length>0){
+            setCurrentAccount(response.data.data[0].accountId)
           getBalance(response.data.data[0].accountId)
+          }
+          
           console.log(response.data)
           const data= response.data.data
         
           setDisplayedAccounts(objArr)
           console.log(response.data);
         console.log("successful" );
+
+    } catch (err) {
+            // Handling errors here
+            if (err.response) {
+              // The server responded with a status other than 2xx
+              if (err.response.status === 400) {
+                alert('Bad Request: Invalid data provided');
+              } else {
+                alert(`Error: ${err.response.status}`);
+              }
+            } else if (err.request) {
+              // The request was made but no response was received
+              alert('No response from server');
+            } else {
+              // Something else went wrong during the setup of the request
+              alert('Error: ' + err.message);
+            }
+          }
       }
 
 
@@ -93,9 +117,9 @@ const handleChange= (newAccount)=>{
                 <div className="amount-card">
                     <h2>Account Details</h2>
                     <div>
-                        <h3>Address: <small>{`${currentAccount}`}</small></h3>
-                    <label>Balance</label>
-                        <select style={{float: "right"}}
+                      {accounts.length==0?'No account yet': <h3>Address: <small>{`${currentAccount}`}</small></h3>}
+                      {accounts.length==0?'':<label>Balance</label>}
+                      {accounts.length==0?'':  <select style={{float: "right"}}
                         id="address"
                         name="address"
                         value={currentAccount}
@@ -104,7 +128,7 @@ const handleChange= (newAccount)=>{
                             {accounts.map((account)=>(
                                 <option>ETH {`*${account.accountId.slice(account.accountId.length-5, account.accountId.length)}`}</option>
                             ))}
-                        </select>
+                        </select>}
                     </div>
                     <div className="balance">
                         {`${balance}`}

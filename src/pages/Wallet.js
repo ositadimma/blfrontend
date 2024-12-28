@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Cookies, useCookies } from "react-cookie";
 
 // private RPC endpoint
-const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac17e37');
-
+// const web3 = new Web3('https://mainnet.infura.io/v3/ca7d1e190ff54df69fd7b36adac17e37');
+const web3 = new Web3('http://127.0.0.1:7545');
 // or public RPC endpoint
 // const web3 = new Web3('https://eth.llamarpc.com');
 

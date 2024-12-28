@@ -22,6 +22,7 @@ export default function RootLayout() {
                     <NavLink className={'navl'} to={'/dashboard/lending'}><div>Lending</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/activity'}><div>Activity</div></NavLink>
                     <NavLink className={'navl'} to={'/dashboard/settings'}><div>Settings</div></NavLink>
+                    <NavLink className={'navl'} to={'/dashboard/logout'}><div>Log out</div></NavLink>
                     {/* <NavLink className={'navl'} to={'/about'}><div>about</div></NavLink>
                     <NavLink className={'navl'} to={'/support'}><div>Support</div></NavLink>    */}
                 </nav>

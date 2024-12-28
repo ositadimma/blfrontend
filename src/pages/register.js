@@ -52,13 +52,33 @@ const Register = () => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
-      const response = await axios.post('http://localhost:10000/v1/auth/api/register', formData);
-     if(response.data){
-      console.log(response.data);
-      console.log("Form submitted successfully", );
-      alert("Registration Successful!");
-      navigate("/login");
-     }
+      try{
+        const response = await axios.post('http://localhost:10000/v1/auth/api/register', formData);
+        if(response.data){
+         console.log(response.data);
+         console.log("Form submitted successfully", );
+         alert("Registration Successful!");
+         navigate("/login");
+        }
+
+      }  catch (err) {
+        // Handling errors here
+        if (err.response) {
+          // The server responded with a status other than 2xx
+          if (err.response.status === 400) {
+            alert('Bad Request: Invalid data provided');
+          } else {
+            alert(`Error: ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // The request was made but no response was received
+          alert('No response from server');
+        } else {
+          // Something else went wrong during the setup of the request
+          alert('Error: ' + err.message);
+        }
+      }
+     
     } else {
       setErrors(validationErrors);
     }
@@ -166,10 +186,10 @@ const Register = () => {
         {errors.gender && <p className="error-text">{errors.gender}</p>}
       </div>
   
-      <div className="form-group">
+      {/* <div className="form-group">
         <label>Profile Picture</label>
         <input type="file" name="profilePicture" onChange={handleChange} />
-      </div>
+      </div> */}
   
       <div className="form-group">
         <label>KYC File (Driver's License/Passport) *</label>
